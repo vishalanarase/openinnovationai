@@ -34,13 +34,38 @@ spec:
           spec:
             description: ComputeJobSpec defines the desired state of ComputeJob
             properties:
-              foo:
-                description: Foo is an example field of ComputeJob. Edit computejob_types.go
-                  to remove/update
+              command:
+                description: The command to run as a job
                 type: string
+              nodeSelector:
+                additionalProperties:
+                  type: string
+                description: Criteria for selecting nodes to run the job
+                type: object
+              parallelism:
+                description: The number of nodes the job should run on simultaneously
+                type: integer
             type: object
           status:
             description: ComputeJobStatus defines the observed state of ComputeJob
+            properties:
+              activeNodes:
+                description: The list of nodes where the job is currently running
+                items:
+                  type: string
+                type: array
+              endTime:
+                description: The end time of the job
+                format: date-time
+                type: string
+              startTime:
+                description: The start time of the job
+                format: date-time
+                type: string
+              state:
+                description: The current state of the job (e.g., Pending, Running,
+                  Completed, Failed)
+                type: string
             type: object
         type: object
     served: true
