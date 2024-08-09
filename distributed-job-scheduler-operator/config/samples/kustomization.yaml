@@ -1,4 +1,5 @@
 ## Append samples of your project ##
 resources:
 - infra_v1_computenode.yaml
+- infra_v1_computejob.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

@@ -4,20 +4,29 @@
 # More info: https://book.kubebuilder.io/reference/project-config.html
 domain: openinnovation.ai
 layout:
-  - go.kubebuilder.io/v4
+- go.kubebuilder.io/v4
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: distributed-job-scheduler-operator
 repo: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator
 resources:
-  - api:
-      crdVersion: v1
-      namespaced: true
-    controller: true
-    domain: openinnovation.ai
-    group: infra
-    kind: ComputeNode
-    path: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1
-    version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: openinnovation.ai
+  group: infra
+  kind: ComputeNode
+  path: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1
+  version: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: openinnovation.ai
+  group: infra
+  kind: ComputeJob
+  path: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1
+  version: v1
 version: "3"
