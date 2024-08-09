@@ -48,6 +48,7 @@ type ComputeNodeStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // ComputeNode is the Schema for the computenodes API
 type ComputeNode struct {

@@ -17,16 +17,15 @@ resources:
   controller: true
   domain: openinnovation.ai
   group: infra
-  kind: ComputeNode
+  kind: ComputeJob
   path: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1
   version: v1
 - api:
     crdVersion: v1
-    namespaced: true
   controller: true
   domain: openinnovation.ai
   group: infra
-  kind: ComputeJob
+  kind: ComputeNode
   path: github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1
   version: v1
 version: "3"
