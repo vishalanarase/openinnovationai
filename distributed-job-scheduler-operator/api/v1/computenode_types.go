@@ -17,25 +17,33 @@ limitations under the License.
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// NodeState represents the state of a node
+type NodeState string
+
+// These are the valid statuses of nodes
+const (
+	// NodePending means the node is pending
+	NodePending NodeState = "Pending"
+	// NodeRunning means the node is running
+	NodeRunning NodeState = "Running"
+	// NodeFailed means the node is failed
+	NodeFailed NodeState = "Failed"
+)
 
 // ComputeNodeSpec defines the desired state of ComputeNode
 type ComputeNodeSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ComputeNode. Edit computenode_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// The resources available to the node (e.g., CPU, memory)
+	Resources corev1.ResourceList `json:"resources,omitempty"`
 }
 
 // ComputeNodeStatus defines the observed state of ComputeNode
 type ComputeNodeStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// The current state of the node (e.g., Pending, Running, Failed)
+	State string `json:"state,omitempty"`
 }
 
 //+kubebuilder:object:root=true
