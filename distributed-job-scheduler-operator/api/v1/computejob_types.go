@@ -20,22 +20,41 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// JobState represents the state of a job
+type JobState string
+
+// These are the valid statuses of jobs
+const (
+	// JobPending means that the job is pending
+	JobPending JobState = "Pending"
+	// JobRunning means that the job is running
+	JobRunning JobState = "Running"
+	// JobFailed means that the job is failed
+	JobFailed JobState = "Failed"
+	// JobCompleted means that the job is completed
+	JobCompleted JobState = "Completed"
+)
 
 // ComputeJobSpec defines the desired state of ComputeJob
 type ComputeJobSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ComputeJob. Edit computejob_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// The command to run as a job
+	Command string `json:"command,omitempty"`
+	// Criteria for selecting nodes to run the job
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+	// The number of nodes the job should run on simultaneously
+	Parallelism int `json:"parallelism,omitempty"`
 }
 
 // ComputeJobStatus defines the observed state of ComputeJob
 type ComputeJobStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// The current state of the job (e.g., Pending, Running, Completed, Failed)
+	State string `json:"state,omitempty"`
+	// The start time of the job
+	StartTime *metav1.Time `json:"startTime,omitempty"`
+	// The end time of the job
+	EndTime *metav1.Time `json:"endTime,omitempty"`
+	// The list of nodes where the job is currently running
+	ActiveNodes []string `json:"activeNodes,omitempty"`
 }
 
 //+kubebuilder:object:root=true
