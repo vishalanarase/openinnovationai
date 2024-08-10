@@ -188,6 +188,7 @@ func createPodForComputeJob(job *infrav1.ComputeJob, node *infrav1.ComputeNode) 
 					Command: []string{"/bin/sh", "-c", job.Spec.Command},
 				},
 			},
+			RestartPolicy: corev1.RestartPolicyOnFailure,
 		},
 	}
 }
