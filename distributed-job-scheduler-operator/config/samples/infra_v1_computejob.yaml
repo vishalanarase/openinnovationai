@@ -9,4 +9,7 @@ metadata:
     app.kubernetes.io/created-by: distributed-job-scheduler-operator
   name: computejob-sample
 spec:
-  # TODO(user): Add fields here
+  command: "echo 'Hello, World!' && sleep 20 && exit 0"
+  nodeSelector:
+    kubernetes.io/hostname: kind-worker
+  parallelism: 1
