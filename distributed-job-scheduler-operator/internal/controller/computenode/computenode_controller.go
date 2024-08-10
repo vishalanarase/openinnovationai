@@ -63,6 +63,8 @@ func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			logger.Error(err, "Failed to delete compute node")
 			return ctrl.Result{}, err
 		}
+
+		return ctrl.Result{}, nil
 	}
 
 	// Fetch the list of kubernetes nodes
@@ -84,7 +86,9 @@ func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			// Create a new compute node resource
 			computeNode = &infrav1.ComputeNode{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: node.Name,
+					Name:        node.Name,
+					Annotations: node.Annotations,
+					Labels:      node.Labels,
 				},
 				Spec: infrav1.ComputeNodeSpec{
 					Resources: node.Status.Capacity,
