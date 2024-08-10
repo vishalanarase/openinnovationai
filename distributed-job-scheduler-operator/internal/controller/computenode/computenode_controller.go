@@ -43,6 +43,7 @@ type ComputeNodeReconciler struct {
 // +kubebuilder:rbac:groups=infra.openinnovation.ai,resources=computenodes/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=infra.openinnovation.ai,resources=computenodes/finalizers,verbs=update
 // +kubebuilder:rbac:groups="",resources=nodes,verbs=get;list;watch
+
 func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
@@ -144,8 +145,8 @@ func (r *ComputeNodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&infrav1.ComputeNode{}).
 		Watches(&corev1.Node{}, &handler.EnqueueRequestForObject{}).
 		WithOptions(controller.Options{
-			MaxConcurrentReconciles: 10,
-			RecoverPanic:            &trueVal,
+			// MaxConcurrentReconciles: 10,
+			RecoverPanic: &trueVal,
 		}).
 		Complete(r)
 }

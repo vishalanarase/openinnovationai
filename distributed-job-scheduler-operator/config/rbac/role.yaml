@@ -5,9 +5,17 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - infra.openinnovation.ai
   resources:
-  - computejobs
+  - computenodes
   verbs:
   - create
   - delete
@@ -19,13 +27,13 @@ rules:
 - apiGroups:
   - infra.openinnovation.ai
   resources:
-  - computejobs/finalizers
+  - computenodes/finalizers
   verbs:
   - update
 - apiGroups:
   - infra.openinnovation.ai
   resources:
-  - computejobs/status
+  - computenodes/status
   verbs:
   - get
   - patch
