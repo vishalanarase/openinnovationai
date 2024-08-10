@@ -11,10 +11,20 @@ spec:
     kind: ComputeJob
     listKind: ComputeJobList
     plural: computejobs
+    shortNames:
+    - cjobs
     singular: computejob
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - description: Status of the compute job
+      jsonPath: .status.state
+      name: Status
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         description: ComputeJob is the Schema for the computejobs API

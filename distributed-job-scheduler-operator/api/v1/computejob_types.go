@@ -59,6 +59,9 @@ type ComputeJobStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:shortName="cjobs"
+//+kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+//+kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.state",description="Status of the compute job"
 
 // ComputeJob is the Schema for the computejobs API
 type ComputeJob struct {

@@ -48,6 +48,9 @@ type ComputeNodeStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:shortName="cnodes"
+//+kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+//+kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.state",description="Status of the compute node"
 //+kubebuilder:resource:scope=Cluster
 
 // ComputeNode is the Schema for the computenodes API

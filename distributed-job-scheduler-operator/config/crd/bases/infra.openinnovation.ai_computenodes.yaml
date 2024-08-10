@@ -14,7 +14,15 @@ spec:
     singular: computenode
   scope: Cluster
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - description: Status of the compute node
+      jsonPath: .status.state
+      name: Status
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         description: ComputeNode is the Schema for the computenodes API
