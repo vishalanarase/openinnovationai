@@ -35,8 +35,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	infrav1 "github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/api/v1"
-	"github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/internal/controller/computejob"
-	"github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/internal/controller/computenode"
+	"github.com/vishalanarase/openinnovationai/distributed-job-scheduler-operator/internal/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -123,14 +122,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&computenode.ComputeNodeReconciler{
+	if err = (&controller.ComputeNodeReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ComputeNode")
 		os.Exit(1)
 	}
-	if err = (&computejob.ComputeJobReconciler{
+	if err = (&controller.ComputeJobReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
