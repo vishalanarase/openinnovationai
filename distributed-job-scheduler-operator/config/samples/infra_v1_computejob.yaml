@@ -11,5 +11,5 @@ metadata:
 spec:
   command: "echo 'Hello, World!' && sleep 20 && exit 0"
   nodeSelector:
-    kubernetes.io/hostname: kind-worker
+    kubernetes.io/os: linux
   parallelism: 1

@@ -18,6 +18,7 @@ package computejob
 
 import (
 	"context"
+	"sort"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -67,6 +68,11 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		return ctrl.Result{}, err
 	}
 
+	// Sort the ComputeNodeList by name
+	sort.Slice(computeNodes.Items, func(i, j int) bool {
+		return computeNodes.Items[i].Name < computeNodes.Items[j].Name
+	})
+
 	// Select the nodes to run pod
 	selectedNodes := selectNodes(computeNodes, computeJob.Spec.NodeSelector, computeJob.Spec.Parallelism)
 	if len(selectedNodes) == 0 {
@@ -79,25 +85,25 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		pod := &corev1.Pod{}
 		err := r.Get(ctx, podName(computeJob.ObjectMeta, node.Name), pod)
 		if err != nil {
-			if errors.IsNotFound(err) {
-				pod = createPodForComputeJob(computeJob, &node)
-				// Set the owner reference for the Pod to be the ComputeJob
-				err = controllerutil.SetControllerReference(computeJob, pod, r.Scheme)
-				if err != nil {
-					logger.Error(err, "Failed to set controller reference on pod")
-					return ctrl.Result{}, err
-				}
-
-				err = r.Client.Create(ctx, pod)
-				if err != nil {
-					logger.Error(err, "Failed to create pod for compute job", "Node", node.Name)
-					continue
-				}
-				computeJob.Status.ActiveNodes = append(computeJob.Status.ActiveNodes, node.Name)
+			if !errors.IsNotFound(err) {
+				logger.Error(err, "Failed to get pod for compute job")
+				return ctrl.Result{}, err
 			}
 
-			logger.Error(err, "Failed to get pod for compute job")
-			return ctrl.Result{}, err
+			pod = createPodForComputeJob(computeJob, &node)
+			// Set the owner reference for the Pod to be the ComputeJob
+			err = controllerutil.SetControllerReference(computeJob, pod, r.Scheme)
+			if err != nil {
+				logger.Error(err, "Failed to set controller reference on pod")
+				return ctrl.Result{}, err
+			}
+
+			err = r.Client.Create(ctx, pod)
+			if err != nil {
+				logger.Error(err, "Failed to create pod for compute job", "Node", node.Name)
+				continue
+			}
+			computeJob.Status.ActiveNodes = append(computeJob.Status.ActiveNodes, node.Name)
 		}
 	}
 
