@@ -94,7 +94,7 @@ func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 					Resources: node.Status.Capacity,
 				},
 				Status: infrav1.ComputeNodeStatus{
-					State: "Pending",
+					State: string(infrav1.NodePending),
 				},
 			}
 
@@ -108,13 +108,13 @@ func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 		// Sync the compute node status with the actual kubernetes node status
 		nodeReady := isNodeReady(node.Status.Conditions)
-		desiredState := "Running"
+		desiredState := infrav1.NodeRunning
 		if !nodeReady {
-			desiredState = "Failed"
+			desiredState = infrav1.NodeFailed
 		}
 
-		if computeNode.Status.State != desiredState {
-			computeNode.Status.State = desiredState
+		if computeNode.Status.State != string(desiredState) {
+			computeNode.Status.State = string(desiredState)
 			if err := r.Status().Update(ctx, computeNode); err != nil {
 				logger.Error(err, "Failed to update compute node status")
 				continue
