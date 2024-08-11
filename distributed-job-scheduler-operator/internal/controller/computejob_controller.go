@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -119,6 +118,7 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			}
 
 			activeNodes = append(activeNodes, node.Name)
+			computeJob.Status.ActiveNodes = activeNodes
 		}
 	}
 
@@ -140,7 +140,6 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	} else {
 		logger.Info("Update compute job status", "Status", infrav1.JobRunning)
 		computeJob.Status.State = string(infrav1.JobRunning)
-		computeJob.Status.ActiveNodes = activeNodes
 		err := r.Status().Update(ctx, computeJob)
 		if err != nil {
 			return reconcile.Result{}, err
@@ -240,13 +239,8 @@ func areAllPodsCompleted(pods []corev1.Pod) bool {
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *ComputeJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	trueVal := true
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&infrav1.ComputeJob{}).
 		Owns(&corev1.Pod{}).
-		WithOptions(controller.Options{
-			// MaxConcurrentReconciles: 10,
-			RecoverPanic: &trueVal,
-		}).
 		Complete(r)
 }

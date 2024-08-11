@@ -26,7 +26,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -140,13 +139,8 @@ func isNodeReady(conditions []corev1.NodeCondition) bool {
 
 // SetupWithManager sets up the controller with the manager.
 func (r *ComputeNodeReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	trueVal := true
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&infrav1.ComputeNode{}).
 		Watches(&corev1.Node{}, &handler.EnqueueRequestForObject{}).
-		WithOptions(controller.Options{
-			// MaxConcurrentReconciles: 10,
-			RecoverPanic: &trueVal,
-		}).
 		Complete(r)
 }
