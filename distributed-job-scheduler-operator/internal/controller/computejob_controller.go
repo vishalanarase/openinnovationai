@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 	"sort"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -60,6 +61,16 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		return ctrl.Result{}, err
 	}
 
+	if computeJob.Status.State == "" {
+		logger.Info("Update compute job status", "Status", infrav1.JobPending)
+		computeJob.Status.State = string(infrav1.JobPending)
+		computeJob.Status.StartTime = &metav1.Time{Time: time.Now()}
+		err := r.Status().Update(ctx, computeJob)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
+	}
+
 	// Implement scheduling logic
 	computeNodes := &infrav1.ComputeNodeList{}
 	err = r.List(ctx, computeNodes)
@@ -76,10 +87,13 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	// Select the nodes to run pod
 	selectedNodes := selectNodes(computeNodes, computeJob.Spec.NodeSelector, computeJob.Spec.Parallelism)
 	if len(selectedNodes) == 0 {
+		logger.Info("Update compute job status", "Status", infrav1.JobFailed)
 		computeJob.Status.State = string(infrav1.JobFailed)
+		computeJob.Status.EndTime = &metav1.Time{Time: time.Now()}
 		return ctrl.Result{}, r.Status().Update(ctx, computeJob)
 	}
 
+	activeNodes := []string{}
 	// Ensure Pods are created on selected nodes
 	for _, node := range selectedNodes {
 		pod := &corev1.Pod{}
@@ -103,7 +117,8 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				logger.Error(err, "Failed to create pod for compute job", "Node", node.Name)
 				continue
 			}
-			computeJob.Status.ActiveNodes = append(computeJob.Status.ActiveNodes, node.Name)
+
+			activeNodes = append(activeNodes, node.Name)
 		}
 	}
 
@@ -115,12 +130,24 @@ func (r *ComputeJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	// Check if all Pods are completed
 	if areAllPodsCompleted(pods) {
+		logger.Info("Update compute job status", "Status", infrav1.JobCompleted)
 		computeJob.Status.State = string(infrav1.JobCompleted)
+		computeJob.Status.EndTime = &metav1.Time{Time: time.Now()}
+		err := r.Status().Update(ctx, computeJob)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
 	} else {
+		logger.Info("Update compute job status", "Status", infrav1.JobRunning)
 		computeJob.Status.State = string(infrav1.JobRunning)
+		computeJob.Status.ActiveNodes = activeNodes
+		err := r.Status().Update(ctx, computeJob)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
 	}
 
-	return ctrl.Result{}, r.Status().Update(ctx, computeJob)
+	return ctrl.Result{}, nil
 }
 
 // listPodsOwnedByComputeJob lists all Pods owned by the specified ComputeJob
