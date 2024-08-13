@@ -52,10 +52,13 @@ func (r *ComputeNodeReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	if err != nil && errors.IsNotFound(err) {
 		// Fetch the compute node
 		computeNode := &infrav1.ComputeNode{}
-		err := r.Client.Get(ctx, types.NamespacedName{Name: node.Name}, computeNode)
+		err := r.Client.Get(ctx, types.NamespacedName{Name: req.Name}, computeNode)
 		if err != nil && !errors.IsNotFound(err) {
 			logger.Error(err, "Failed to get compute node")
 			return ctrl.Result{}, err
+		}
+		if errors.IsNotFound(err) {
+			return ctrl.Result{}, nil
 		}
 
 		// Delete the compute node
