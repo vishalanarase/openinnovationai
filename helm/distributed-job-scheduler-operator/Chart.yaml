@@ -1,0 +1,5 @@
+apiVersion: v2
+name: distributed-job-scheduler-operator
+description: A Helm chart for deploying distributed-job-scheduler-operator operator
+version: 0.1.0
+appVersion: "1.0"

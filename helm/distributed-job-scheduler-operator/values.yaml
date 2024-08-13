@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: your-operator-image
+  tag: latest
+  pullPolicy: Always
+
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+
+resources: {}
