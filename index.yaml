@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  distributed-job-scheduler-operator:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2025-05-28T12:18:30.969926+05:30"
+    description: A Helm chart for deploying distributed-job-scheduler-operator operator
+    digest: ad45afdf70f7c768a23e4efb7dcbdd23c0793e1e82f34f7c0bad248760a49d7a
+    name: distributed-job-scheduler-operator
+    urls:
+    - https://github.com/vishalanarase/openinnovationai/releases/latest/download/charts/distributed-job-scheduler-operator-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-05-28T12:18:30.96921+05:30"
