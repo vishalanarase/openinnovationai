@@ -1,74 +1,41 @@
 # Steps to Create a Helm Chart Repository
 > To convert your existing Helm chart directory into a repository that can be used as a Helm chart repo (so others can install it via helm repo add and helm install)
 
+If you **don’t want to use GitHub Pages** and just want to use your GitHub repo as a Helm repository **directly from the repo files** (for example, the `charts/` directory in your main/master branch), you can still use the raw file URLs to serve your Helm repo.
+
+Here’s how you can do it:
+
 ---
 
-## 1. Package your Helm chart
-
-Navigate to your chart directory and use `helm package`:
+## 1. Package your chart and create the index
 
 ```bash
 cd helm/distributed-job-scheduler-operator
 helm package .
-```
-This creates a `.tgz` file (e.g., `distributed-job-scheduler-operator-<version>.tgz`).
-
----
-
-## 2. Move the chart package to a charts directory (optional but recommended)
-
-Create a `charts` directory at the root of your repo and move the `.tgz` file there:
-
-```bash
 mkdir -p ../../charts
 mv distributed-job-scheduler-operator-*.tgz ../../charts/
 cd ../../charts
+helm repo index . --url https://raw.githubusercontent.com/vishalanarase/openinnovationai/master/charts
 ```
+
+This will generate an `index.yaml` pointing to the raw GitHub URLs.
 
 ---
 
-## 3. Generate an index.yaml for your chart repo
-
-Use the `helm repo index` command to generate or update the Helm repository index file:
-
-```bash
-helm repo index . --url https://github.com/vishalanarase/openinnovationai/releases/latest/download
-```
-
-- If you want to serve from the `main` branch via GitHub Pages, use:
-  ```
-  helm repo index . --url https://vishalanarase.github.io/openinnovationai/charts
-  ```
-
----
-
-## 4. Push the `charts/` directory (containing `.tgz` and `index.yaml`) to your GitHub repository
-
-Add, commit, and push:
+## 2. Push the `charts/` directory and its contents (`.tgz` and `index.yaml`) to your repo
 
 ```bash
 git add charts/
-git commit -m "Add packaged helm chart and repo index"
+git commit -m "Add Helm chart and index"
 git push
 ```
 
 ---
 
-## 5. (Recommended) Serve your chart via GitHub Pages
-
-- Go to your repo’s settings.
-- Under "Pages", set the source to the `charts/` directory on the `main` branch.
-- Your Helm repo URL will then be:  
-  `https://vishalanarase.github.io/openinnovationai/charts`
-
----
-
-## 6. Add your Helm repo and install the chart
-
-On any machine:
+## 3. Add the repo using the **raw GitHub URL**:
 
 ```bash
-helm repo add openinnovationai https://vishalanarase.github.io/openinnovationai/charts
+helm repo add openinnovationai https://raw.githubusercontent.com/vishalanarase/openinnovationai/master/charts
 helm repo update
 helm search repo openinnovationai
 helm install my-job-scheduler openinnovationai/distributed-job-scheduler-operator
@@ -76,12 +43,16 @@ helm install my-job-scheduler openinnovationai/distributed-job-scheduler-operato
 
 ---
 
-### **Summary**
+### Notes
+- **raw.githubusercontent.com** serves static files from your repo, so `index.yaml` and `.tgz` files are accessible.
+- This method works for **public repos only**.
+- This is the most common approach for “Helm chart repos” that don’t use GitHub Pages or a custom web server.
 
-- Package your chart (`helm package .`)
-- Create `charts/`, move package there
-- Generate `index.yaml` (`helm repo index . --url ...`)
-- Push to GitHub, enable Pages if desired
-- Add repo with `helm repo add ...`, then install
+---
+
+### Summary
+
+- Use `https://raw.githubusercontent.com/<owner>/<repo>/<branch>/charts` as your Helm repo URL
+- Make sure `index.yaml` and your packaged chart are present in that directory and committed
 
 ---
