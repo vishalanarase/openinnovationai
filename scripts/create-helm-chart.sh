@@ -39,8 +39,8 @@ cat <<EOF > "${HELM_CHART_DIR}/${HELM_CHART_NAME}/Chart.yaml"
 apiVersion: v2
 name: ${HELM_CHART_NAME}
 description: A Helm chart for deploying ${HELM_CHART_NAME} operator
-version: 0.1.0
-appVersion: "1.0"
+version: 0.1.1
+appVersion: "1.0.0"
 EOF
 
 # Create Helm's values.yaml file
@@ -54,7 +54,6 @@ image:
 
 serviceAccount:
   create: true
-  name: ""
 
 rbac:
   create: true
